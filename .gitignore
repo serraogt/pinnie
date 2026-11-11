@@ -1,0 +1,15 @@
+node_modules/
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Editor
+.vscode/*
+.idea/*
+!.idea/icon.png
+_adhoc-check-badge.mjs

@@ -1,0 +1,19 @@
+{
+  "name": "harita-pin-lite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kişisel kullanım için sunucusuz harita + fotoğraf PWA'sı (derleme adımı yok, düz HTML/CSS/JS).",
+  "type": "module",
+  "scripts": {
+    "serve": "serve . -p 5173",
+    "fetch-vendor": "node --use-system-ca tools/fetch-vendor.mjs",
+    "gen-icons": "node tools/gen-icons.mjs",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "piexifjs": "^1.0.6",
+    "playwright": "^1.47.2",
+    "pureimage": "^0.4.13",
+    "serve": "^14.2.3"
+  }
+}

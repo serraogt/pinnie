@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0a84ff">
+<title>Harita Pin</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Harita Pin">
+<link rel="stylesheet" href="vendor/maplibre-gl/maplibre-gl.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="map"></div>
+
+<div id="ui-layer">
+  <button id="btn-locate" class="fab fab-secondary" type="button" aria-label="Konumuma git">
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path fill="currentColor" d="M12 2a1 1 0 0 1 1 1v1.06A8.004 8.004 0 0 1 19.94 11H21a1 1 0 1 1 0 2h-1.06A8.004 8.004 0 0 1 13 19.94V21a1 1 0 1 1-2 0v-1.06A8.004 8.004 0 0 1 4.06 13H3a1 1 0 1 1 0-2h1.06A8.004 8.004 0 0 1 11 4.06V3a1 1 0 0 1 1-1Zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12Zm0 3.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6Z"/>
+    </svg>
+  </button>
+  <button id="btn-add" class="fab fab-primary" type="button" aria-label="Fotoğraf ekle">
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+      <path fill="currentColor" d="M11 5a1 1 0 1 1 2 0v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5Z"/>
+    </svg>
+  </button>
+  <button id="btn-menu" class="fab fab-top-right" type="button" aria-label="Menü">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path fill="currentColor" d="M4 7a1 1 0 1 1 0-2h16a1 1 0 1 1 0 2H4Zm0 6a1 1 0 1 1 0-2h16a1 1 0 1 1 0 2H4Zm0 6a1 1 0 1 1 0-2h16a1 1 0 1 1 0 2H4Z"/>
+    </svg>
+  </button>
+</div>
+
+<input type="file" id="photo-picker" accept="image/*" multiple hidden aria-hidden="true">
+<input type="file" id="photo-picker-plus" accept="image/*" multiple hidden aria-hidden="true">
+<input type="file" id="restore-picker" accept=".zip,application/zip" hidden aria-hidden="true">
+
+<div id="toast-root" aria-live="polite"></div>
+
+<script src="vendor/maplibre-gl/maplibre-gl.js"></script>
+<script src="vendor/supercluster/supercluster.js"></script>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1019 @@
+:root {
+  --color-bg: #f2f2f7;
+  --color-surface: #ffffff;
+  --color-surface-2: #f2f2f7;
+  --color-surface-3: #e5e5ea;
+  --color-text: #1c1c1e;
+  --color-text-muted: #6b6b70;
+  --color-accent: #007aff;
+  --color-danger: #ff3b30;
+  --color-border: rgba(60, 60, 67, 0.29);
+  --color-shadow: rgba(0, 0, 0, 0.2);
+  --color-badge-bg: rgba(28, 28, 30, 0.65);
+  --color-badge-text: #ffffff;
+  --blur-material: blur(20px) saturate(180%);
+  --color-material-bg: rgba(255, 255, 255, 0.72);
+  --color-material-bg-strong: rgba(28, 28, 30, 0.72);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #000000;
+    --color-surface: #1c1c1e;
+    --color-surface-2: #2c2c2e;
+    --color-surface-3: #3a3a3c;
+    --color-text: #f2f2f7;
+    --color-text-muted: #9b9ba1;
+    --color-accent: #0a84ff;
+    --color-danger: #ff453a;
+    --color-border: rgba(84, 84, 88, 0.65);
+    --color-shadow: rgba(0, 0, 0, 0.6);
+    --color-material-bg: rgba(28, 28, 30, 0.72);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font-family: inherit;
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.map-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  /* İlk gölge, fotoğrafın rengi ne olursa olsun (açık/pastel tonlar
+     dahil) haritanın zeminine karşı her zaman görünen ince koyu bir
+     kontur oluşturur; ikincisi hafif bir derinlik gölgesi ekler. */
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.45)) drop-shadow(0 2px 4px var(--color-shadow));
+}
+
+.map-marker-bubble {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  padding: 3px;
+  box-sizing: border-box;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface-2);
+}
+
+.map-marker-blur-bg {
+  position: absolute;
+  inset: -6px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(6px) brightness(0.8) saturate(1.15);
+}
+
+.map-marker-thumb {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 11px;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+}
+
+.map-marker-grid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1.5px;
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.map-marker-grid-cells-2 {
+  grid-template-rows: 1fr;
+}
+
+.map-marker-grid-cells-3 .map-marker-grid-cell:first-child {
+  grid-row: span 2;
+}
+
+.map-marker-grid-cell {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.map-marker-note {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  padding: 2px 4px;
+  border-radius: 0 0 11px 11px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.map-marker-pointer {
+  width: 16px;
+  height: 12px;
+  margin-top: -3px;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background-size: 56px 56px;
+  background-position: center -44px;
+  filter: blur(3px) brightness(0.78) saturate(1.15);
+}
+
+.map-marker-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--color-badge-bg);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: var(--color-badge-text);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.progress-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.progress-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 140px;
+  padding: 24px 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-material-bg-strong);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  color: #ffffff;
+  box-shadow: 0 8px 30px var(--color-shadow);
+}
+
+.spinner {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+
+.spinner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(
+    rgba(255, 255, 255, 0.95) 0deg 10deg,
+    rgba(255, 255, 255, 0.15) 10deg 30deg,
+    transparent 30deg 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 9px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 9px));
+  animation: spin 0.8s steps(12) infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.progress-text {
+  font-size: 13px;
+  text-align: center;
+}
+
+.photo-grid-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+}
+
+.photo-grid-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(12px + var(--safe-top)) 16px 12px;
+  background: var(--color-material-bg);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.photo-grid-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.photo-grid-close {
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-surface-3);
+  color: var(--color-text-muted);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.photo-grid-close:active {
+  opacity: 0.6;
+}
+
+.photo-grid {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 4px;
+  padding: 4px calc(4px + var(--safe-right)) calc(4px + var(--safe-bottom)) calc(4px + var(--safe-left));
+}
+
+.photo-grid-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: var(--color-surface-2);
+  border-radius: 4px;
+}
+
+/* --- Genel butonlar (iOS filled / gray / plain-destructive) --- */
+
+.btn {
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.1s ease;
+}
+
+.btn:active {
+  opacity: 0.6;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background: var(--color-surface-3);
+  color: var(--color-accent);
+}
+
+.btn-danger {
+  background: var(--color-surface-3);
+  color: var(--color-danger);
+  border: none;
+}
+
+/* --- Pin detay paneli --- */
+
+.pin-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.pin-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(12px + var(--safe-top)) 8px 8px 16px;
+  background: var(--color-material-bg);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.pin-detail-back {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-accent);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pin-detail-back:active {
+  opacity: 0.5;
+}
+
+.pin-detail-title {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 17px;
+  font-weight: 600;
+  padding: 8px 4px;
+}
+
+.pin-detail-title:focus {
+  outline: none;
+}
+
+.pin-detail-note {
+  margin: 8px 16px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.pin-edit-save {
+  margin: 16px;
+}
+
+/* --- Nişangah (konum seçme) --- */
+
+.crosshair-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.crosshair-header {
+  pointer-events: auto;
+  margin: calc(12px + var(--safe-top)) auto 0;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--color-material-bg);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 10px var(--color-shadow);
+}
+
+.crosshair-mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin: -32px 0 0 -16px; /* ucu haritanın tam ortasına denk gelsin diye yukarı kaydır */
+  pointer-events: none;
+}
+
+.crosshair-mark::before,
+.crosshair-mark::after {
+  content: '';
+  position: absolute;
+  background: var(--color-accent);
+}
+
+.crosshair-mark::before {
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  margin-left: -1px;
+}
+
+.crosshair-mark::after {
+  top: 50%;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  margin-top: -1px;
+}
+
+.crosshair-actions {
+  pointer-events: auto;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 0 16px calc(16px + var(--safe-bottom));
+}
+
+/* --- Tam ekran foto görüntüleyici --- */
+
+.photo-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  z-index: 1400;
+}
+
+.photo-viewer-track {
+  height: 100%;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  touch-action: pan-x pinch-zoom;
+}
+
+.photo-viewer-slide {
+  position: relative;
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.photo-viewer-caption {
+  position: absolute;
+  left: 50%;
+  bottom: calc(24px + var(--safe-bottom));
+  transform: translateX(-50%);
+  max-width: 80vw;
+  max-height: 30vh;
+  overflow-y: auto;
+  padding: 8px 14px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+.photo-viewer-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.05s linear;
+  touch-action: pan-x pinch-zoom;
+}
+
+.photo-viewer-close {
+  position: absolute;
+  top: calc(12px + var(--safe-top));
+  right: calc(12px + var(--safe-right));
+  width: 32px;
+  height: 32px;
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(60, 60, 67, 0.5);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.photo-viewer-toolbar {
+  position: absolute;
+  top: calc(12px + var(--safe-top));
+  left: calc(12px + var(--safe-left));
+  display: flex;
+  gap: 8px;
+}
+
+.photo-viewer-toolbar-btn {
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: rgba(60, 60, 67, 0.5);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.photo-viewer-toolbar-menu {
+  min-width: 44px;
+  padding: 0;
+  font-size: 20px;
+}
+
+.photo-viewer-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(60, 60, 67, 0.5);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.photo-viewer-prev {
+  left: calc(12px + var(--safe-left));
+}
+
+.photo-viewer-next {
+  right: calc(12px + var(--safe-right));
+}
+
+#ui-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#ui-layer > * {
+  pointer-events: auto;
+}
+
+.fab {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-material-bg);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  color: var(--color-accent);
+  box-shadow: 0 2px 10px var(--color-shadow);
+  cursor: pointer;
+}
+
+.fab:active {
+  transform: scale(0.94);
+}
+
+.fab-secondary {
+  right: calc(16px + var(--safe-right));
+  bottom: calc(84px + var(--safe-bottom));
+}
+
+.fab-primary {
+  width: 56px;
+  height: 56px;
+  right: calc(12px + var(--safe-right));
+  bottom: calc(16px + var(--safe-bottom));
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+.fab-top-right {
+  top: calc(12px + var(--safe-top));
+  right: calc(16px + var(--safe-right));
+}
+
+/* --- Menü --- */
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1100;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.menu-sheet {
+  margin-top: calc(60px + var(--safe-top));
+  margin-right: calc(16px + var(--safe-right));
+  min-width: 240px;
+  background: var(--color-material-bg);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 30px var(--color-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+}
+
+.menu-item {
+  padding: 12px 16px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  color: var(--color-accent);
+  text-align: left;
+  font-size: 17px;
+  cursor: pointer;
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.menu-item:active {
+  background: var(--color-surface-2);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+/* --- Genel diyalog --- */
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 1600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.dialog-card {
+  width: 100%;
+  max-width: 270px;
+  background: var(--color-material-bg);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  border-radius: var(--radius-md);
+  padding: 20px 16px 0;
+  box-shadow: 0 8px 30px var(--color-shadow);
+  text-align: center;
+  overflow: hidden;
+}
+
+.dialog-title {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.dialog-message {
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.35;
+  white-space: pre-line;
+}
+
+.dialog-actions {
+  display: flex;
+  flex-direction: column;
+  margin: 0 -16px;
+}
+
+.dialog-action {
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-top: 0.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-accent);
+  font-size: 17px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.dialog-action:active {
+  background: var(--color-surface-2);
+}
+
+.dialog-action-destructive {
+  color: var(--color-danger);
+}
+
+.dialog-action-cancel {
+  font-weight: 600;
+}
+
+/* --- Dışa aktarma ekranı --- */
+
+.export-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.export-header-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.export-body {
+  padding: 8px 16px calc(24px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.export-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.export-section-title {
+  margin: 0 0 6px;
+  padding: 0 4px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.export-row-group {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.export-radio-label,
+.export-pin-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: 17px;
+  color: var(--color-text);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.export-radio-label:last-child,
+.export-pin-item:last-child {
+  border-bottom: none;
+}
+
+.export-radio-label:active,
+.export-pin-item:active {
+  background: var(--color-surface-2);
+}
+
+.export-row-label {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Native input'u tüm satırın üzerine görünmez şekilde yayıp dokunma
+   alanını satırın tamamı yapıyoruz; görsel gösterge ayrı bir eleman. */
+.export-radio-label input,
+.export-pin-item input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.export-row-check {
+  flex-shrink: 0;
+  margin-left: 12px;
+  color: var(--color-accent);
+  font-size: 17px;
+  font-weight: 600;
+  opacity: 0;
+}
+
+.export-radio-label:has(input:checked) .export-row-check {
+  opacity: 1;
+}
+
+.export-row-checkbox {
+  flex-shrink: 0;
+  margin-left: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.export-pin-item:has(input:checked) .export-row-checkbox {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  position: relative;
+}
+
+.export-pin-item:has(input:checked) .export-row-checkbox::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 11px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.export-pin-list {
+  margin-top: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.export-title-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 17px;
+}
+
+.export-estimate {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.export-submit {
+  width: 100%;
+}
+
+/* --- Güncelleme bandı --- */
+
+.update-banner {
+  position: fixed;
+  left: calc(12px + var(--safe-left));
+  right: calc(12px + var(--safe-right));
+  bottom: calc(12px + var(--safe-bottom));
+  z-index: 1800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-material-bg-strong);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  color: #ffffff;
+  box-shadow: 0 8px 24px var(--color-shadow);
+  font-size: 14px;
+}
+
+.update-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.update-banner-btn {
+  min-height: 36px;
+  padding: 0 14px;
+  flex-shrink: 0;
+}
+
+#toast-root {
+  position: absolute;
+  left: 50%;
+  bottom: calc(24px + var(--safe-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  max-width: min(90vw, 420px);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--color-material-bg-strong);
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+  color: #ffffff;
+  box-shadow: 0 4px 16px var(--color-shadow);
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast.toast-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.toast-error {
+  box-shadow: 0 4px 16px var(--color-shadow), inset 0 0 0 1px var(--color-danger);
+}
+
+/* --- MapLibre varsayılan kontrolleri (attribution) --- */
+
+.maplibregl-ctrl-bottom-right {
+  margin: 0 calc(8px + var(--safe-right)) calc(8px + var(--safe-bottom)) 0;
+}
+
+.maplibregl-ctrl-attrib {
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-material-bg) !important;
+  -webkit-backdrop-filter: var(--blur-material);
+  backdrop-filter: var(--blur-material);
+}
+
+.maplibregl-ctrl-attrib-inner,
+.maplibregl-ctrl-attrib a {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.maplibregl-ctrl-attrib-button {
+  border-radius: 50%;
+}
