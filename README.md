@@ -115,3 +115,5 @@ Bazı kurumsal ağlarda (güvenlik politikası gereği) Chrome, Playwright'ın v
 
 - `npm run fetch-vendor` — `vendor/` klasöründeki kütüphaneleri CDN'den yeniden indirir (sürüm güncellemesi gerektiğinde `tools/fetch-vendor.mjs` içindeki sürüm numaralarını değiştir).
 - `npm run gen-icons` — `icons/icon.svg`'deki tasarımı `icons/*.png` olarak yeniden üretir.
+
+- @Future path track çizilebilsin
